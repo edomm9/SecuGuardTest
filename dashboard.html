@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SecuGuard</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <i class="bi bi-shield-check me-2 fs-4"></i>
+                SecuGuard
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 active" href="dashboard.html">
+                            <i class="bi bi-speedometer2 me-1"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="logs.html">
+                            <i class="bi bi-list-ul me-1"></i>
+                            Logs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="scanner.html">
+                            <i class="bi bi-search me-1"></i>
+                            Scanner
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="h2 mb-0 fw-bold">Security Dashboard</h1>
+                    <p class="text-muted mb-0">Real-time security monitoring and analytics</p>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <button class="btn btn-outline-primary btn-sm me-2" id="refresh-dashboard">
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+                        Refresh
+                    </button>
+                    <span class="text-muted small">Last updated: <span id="last-updated">--</span></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Statistics -->
+    <section class="py-4">
+        <div class="container">
+            <!-- Loading State -->
+            <div id="dashboard-loading" class="text-center py-5">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading dashboard...</span>
+                </div>
+                <p class="text-muted">Loading security metrics...</p>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboard-content" class="d-none">
+                <!-- Key Metrics Row -->
+                <div class="row g-4 mb-5">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-feature me-3 bg-danger">
+                                        <i class="bi bi-shield-exclamation"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h3 class="fw-bold mb-0" id="metric-threats">0</h3>
+                                        <p class="text-muted mb-0">
+                                            Threats Detected
+                                            <i class="bi bi-info-circle ms-1" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-placement="top" 
+                                               title="Total number of security threats detected and blocked in the last 24 hours"></i>
+                                        </p>
+                                        <small class="text-success">
+                                            <i class="bi bi-arrow-down me-1"></i>
+                                            <span id="threats-change">0%</span> from yesterday
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-feature me-3 bg-warning">
+                                        <i class="bi bi-ban"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h3 class="fw-bold mb-0" id="metric-blocked-ips">0</h3>
+                                        <p class="text-muted mb-0">
+                                            Unique Ip Sources
+                                            <i class="bi bi-info-circle ms-1" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-placement="top" 
+                                               title="Number of IP addresses currently blocked due to suspicious activity"></i>
+                                        </p>
+                                        <small class="text-danger">
+                                            <i class="bi bi-arrow-up me-1"></i>
+                                            <span id="blocked-ips-change">0%</span> from yesterday
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-feature me-3 bg-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h3 class="fw-bold mb-0" id="metric-scans">0</h3>
+                                        <p class="text-muted mb-0">
+                                            Security Scans
+                                            <i class="bi bi-info-circle ms-1" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-placement="top" 
+                                               title="Total number of security scans completed today"></i>
+                                        </p>
+                                        <small class="text-success">
+                                            <i class="bi bi-arrow-up me-1"></i>
+                                            <span id="scans-change">0%</span> from yesterday
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-feature me-3 bg-success">
+                                        <i class="bi bi-check-circle"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h3 class="fw-bold mb-0" id="metric-uptime">0%</h3>
+                                        <p class="text-muted mb-0">
+                                            Logs Processing Success
+                                            <i class="bi bi-info-circle ms-1" 
+                                               data-bs-toggle="tooltip" 
+                                               data-bs-placement="top" 
+                                               title="Percentage of time all security systems have been operational"></i>
+                                        </p>
+                                        <small class="text-success">
+                                            <i class="bi bi-check me-1"></i>
+                                            
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Charts Row -->
+                <div class="row g-4 mb-5">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0 fw-bold">
+                                        <i class="bi bi-graph-up me-2"></i>
+                                        Threat Activity (Last 7 Days)
+                                    </h5>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <input type="radio" class="btn-check" name="chart-period" id="chart-7d" checked>
+                                        <label class="btn btn-outline-primary" for="chart-7d">7D</label>
+                                        <input type="radio" class="btn-check" name="chart-period" id="chart-30d">
+                                        <label class="btn btn-outline-primary" for="chart-30d">30D</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="threat-activity-chart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-bold">
+                                    <i class="bi bi-pie-chart me-2"></i>
+                                    Threat Types Distribution
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="threat-types-chart" width="300" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IP Analysis and URL Tracking Row -->
+                <div class="row g-4 mb-5">
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-bold">
+                                    <i class="bi bi-router me-2"></i>
+                                    Top IP Addresses
+                                </h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="blocked-ips-list">
+                                    <!-- Dynamic IP list will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-bold">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    Dangerous URLs Detected
+                                </h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="dangerous-urls-list">
+                                    <!-- Dynamic URL list will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scan Summary Chart -->
+                <div class="row g-4 mb-5">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-bold">
+                                    <i class="bi bi-bar-chart me-2"></i>
+                                    Security Scan Summary
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-4">
+                                    <div class="col-lg-8">
+                                        <canvas id="scan-summary-chart" width="600" height="300"></canvas>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="d-flex flex-column h-100 justify-content-center">
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold text-success">Clean URLs</h6>
+                                                <div class="progress mb-2">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 85%" id="clean-urls-progress"></div>
+                                                </div>
+                                                <small class="text-muted"><span id="clean-urls-count">1,089</span> URLs scanned</small>
+                                            </div>
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold text-warning">Suspicious URLs</h6>
+                                                <div class="progress mb-2">
+                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 12%" id="suspicious-urls-progress"></div>
+                                                </div>
+                                                <small class="text-muted"><span id="suspicious-urls-count">154</span> URLs flagged</small>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-bold text-danger">Malicious URLs</h6>
+                                                <div class="progress mb-2">
+                                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 3%" id="malicious-urls-progress"></div>
+                                                </div>
+                                                <small class="text-muted"><span id="malicious-urls-count">41</span> URLs blocked</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-bold">
+                                    <i class="bi bi-activity me-2"></i>
+                                    Recent Security Events
+                                </h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="recent-events-container">
+                                    <!-- Dynamic events will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 mt-4 mt-lg-0">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-bottom">
+                                <h5 class="mb-0 fw-bold">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    Active Alerts
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="active-alerts-container">
+                                    <!-- Dynamic alerts will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-4 mt-5 bg-dark text-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-shield-check me-2 fs-5"></i>
+                        <span class="fw-semibold">SecureGuard</span>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                    <small>&copy; 2025 SecuGuard. All rights reserved.</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Added Chart.js library for analytics charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JS -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>
